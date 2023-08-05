@@ -80,38 +80,21 @@ class Graph(object):
 class Solution:
     
     def spath_algo(self, graph, start_node):
-            #type graph: String Dictionary
-            #type start_node: 
-            #return type: int
+        distances = {node: float('inf') for node in graph.get_nodes()}
+        distances[start_node] = 0
+        unvisited = set(graph.get_nodes())
+        
+        current_node = start_node
+        while unvisited:
+            current_node = min(unvisited, key=lambda node: distances[node])
+            unvisited.remove(current_node)
             
-            #TODO: Write code below to return an int with the solution to the prompt.
-            current_node = start_node
-            down1 = ""
-            down2 = ""
-            time = 0
-            min = 1000
-            total = 0
-            ind = 0
-            while "Finish" != current_node:
-                neighbors = Graph(object).get_outgoing_edges(self, current_node)
-                index = 0
-                while len(neighbors)>index:
-                    down1 = neighbors[index]
-                    time = Graph(object).value(self, current_node, down1)+time
-                    neighbors_new = Graph(object).get_outgoing_edges(self, down1)
-                    sub = 0
-                    while len(neighbors_new)>sub:
-                        down2 = neighbors_new[sub]
-                        time = Graph(object).value(self, down1, down2)+time
-                        if time<min:
-                            ind = down2
-                            min = time 
-                        time = 0
-                        sub = sub + 1
-                    index = index +1
-                current_node = ind
-                total = total+min
-            return total
+            for neighbor in graph.get_outgoing_edges(current_node):
+                new_distance = distances[current_node] + graph.value(current_node, neighbor)
+                if new_distance < distances[neighbor]:
+                    distances[neighbor] = new_distance
+        
+        return distances
 
 
 def main():
@@ -128,7 +111,7 @@ def main():
             in_graph[nodes[i]][edges[j]] = int(weights[j])
 
     graph = Graph(nodes, in_graph)
-    _, shortest_path = tc1.spath_algo(graph, "Start")
+    shortest_path = tc1.spath_algo(graph, "Start")
     print(shortest_path["Finish"])
 
 if __name__ == "__main__":
